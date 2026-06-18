@@ -1,0 +1,91 @@
+// ==========================================
+// CONFIGURACIÓN DE SERVIDOR
+// ==========================================
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+// ==========================================
+// CAPA 1: MÉTRICAS (PROMETHEUS)
+// ==========================================
+
+// 1. Destino: Dónde enviar las métricas
+prometheus.remote_write "local_prometheus" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+// 2. Origen: Raspar los datos de Node Exporter
+prometheus.scrape "node_exporter" {
+  targets = [{
+    __address__ = "node-exporter:9100",
+    instance    = "pro-monitor",
+    environment = "produccion",
+    service     = "system-metrics",
+  }]
+  forward_to = [prometheus.remote_write "local_prometheus".receiver]
+}
+
+
+// ==========================================
+// CAPA 2: LOGS DE DOCKER (LOKI)
+// ==========================================
+
+// 1. Destino: Dónde enviar los logs
+loki.write "local_loki" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+  external_labels = {
+    environment = "produccion",
+  }
+}
+
+// 2. Origen: Buscar todos los logs de los contenedores de Docker
+local.file_match "docker_containers" {
+  path_targets = [{
+    __path__ = "/var/lib/docker/containers/*/*.log",
+    job      = "docker-logs",
+  }]
+}
+
+// 3. Pipeline: Procesar el JSON nativo de Docker (Equivalente a tus pipeline_stages)
+loki.process "docker_json_parser" {
+  // Extrae las variables del formato JSON que genera Docker
+  stage.json {
+    expressions = {
+      output    = "log",
+      stream    = "stream",
+      timestamp = "time",
+    }
+  }
+
+  // Convierte el stream (stdout/stderr) en una etiqueta de búsqueda
+  stage.labels {
+    values = {
+      stream = "stream",
+    }
+  }
+
+  // Mapea el timestamp original del log para que Loki no use la hora actual
+  stage.timestamp {
+    source = "timestamp"
+    format = "RFC3339Nano"
+  }
+
+  // Reemplaza la salida para que en Grafana veas solo el texto limpio y no el JSON completo
+  stage.output {
+    source = "output",
+    environment = "produccion"
+  }
+
+  forward_to = [loki.write "local_loki".receiver]
+}
+
+// 4. Envío: Lee los archivos encontrados y los pasa por el pipeline procesador
+loki.source.file "docker_logs" {
+  targets    = local.file_match "docker_containers".targets
+  forward_to = [loki.process "docker_json_parser".receiver]
+}
