@@ -27,6 +27,9 @@ services:
     env_file:
       - .env
     volumes:
+      - /docker/monitor-stack/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - /docker/monitor-stack/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - /docker/monitor-stack/grafana/dashboards:/var/lib/grafana/dashboards
       - /docker/monitor-stack/grafana/data:/var/lib/grafana
     networks:
       - monitoring

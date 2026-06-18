@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - /docker/monitor-stack/loki/loki-config.yaml:/etc/loki/local-config.yaml
+      - /docker/monitor-stack/loki/data:/loki
+    networks:
+      - monitoring
+    restart: always
+
+networks:
+  monitoring:
+    external: true
