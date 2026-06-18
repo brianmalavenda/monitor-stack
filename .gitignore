@@ -9,8 +9,8 @@
 backup-*/
 
 # Datos de Docker volumes (si se exportan)
-prometheus-data/
-grafana-data/
+prometheus/data/
+grafana/data/
 
 # Archivos del sistema operativo
 .DS_Store
