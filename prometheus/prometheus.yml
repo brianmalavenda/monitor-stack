@@ -32,31 +32,31 @@ scrape_configs:
     scrape_interval: 30s
     # metrics_path: /metrics 
 
-  # Monitorización de la aplicación de ejemplo
-  - job_name: 'andes'
-    static_configs:
-      - targets: ['10.0.37.13:8082'] # apunto a un vm de proxmox que corre un contenedor expuesto en el puerto 8082
-    scrape_interval: 20s
-    # metrics_path: /metrics
-    scrape_timeout: 5s
+  # # Monitorización de la aplicación de ejemplo
+  # - job_name: 'andes'
+  #   static_configs:
+  #     - targets: ['10.0.37.13:8082'] # apunto a un vm de proxmox que corre un contenedor expuesto en el puerto 8082
+  #   scrape_interval: 20s
+  #   # metrics_path: /metrics
+  #   scrape_timeout: 5s
 
-  # Monitorización de la vm de administracion con Node Exporter
-  - job_name: 'vm-admin'
-    static_configs:
-      - targets: ['10.0.17.12:9100']
-    scrape_interval: 15s
-    # metrics_path: /metrics
+  # # Monitorización de la vm de administracion con Node Exporter
+  # - job_name: 'vm-admin'
+  #   static_configs:
+  #     - targets: ['10.0.17.12:9100']
+  #   scrape_interval: 15s
+  #   # metrics_path: /metrics
 
-  # Monitorización de NGINX con Node Exporter
-  - job_name: 'truenas'
-    static_configs:
-      - targets: ['10.0.17.11:9100']
-    scrape_interval: 15s
-    # metrics_path: /metrics
+  # # Monitorización de NGINX con Node Exporter
+  # - job_name: 'truenas'
+  #   static_configs:
+  #     - targets: ['10.0.17.11:9100']
+  #   scrape_interval: 15s
+  #   # metrics_path: /metrics
 
-  # Monitorización de NGINX con Node Exporter
-  - job_name: 'nginx'
-    static_configs:
-      - targets: ['10.0.37.10:9100']
-    scrape_interval: 15s
-    # metrics_path: /metrics
+  # # Monitorización de NGINX con Node Exporter
+  # - job_name: 'nginx'
+  #   static_configs:
+  #     - targets: ['10.0.37.10:9100']
+  #   scrape_interval: 15s
+  #   # metrics_path: /metrics
