@@ -25,7 +25,7 @@ prometheus.scrape "node_exporter" {
     environment = "produccion",
     service     = "system-metrics",
   }]
-  forward_to = [prometheus.remote_write "local_prometheus".receiver]
+  forward_to = [prometheus.remote_write.local_prometheus.receiver]
 }
 
 
@@ -51,7 +51,7 @@ local.file_match "docker_containers" {
   }]
 }
 
-// 3. Pipeline: Procesar el JSON nativo de Docker (Equivalente a tus pipeline_stages)
+// 3. Pipeline: Procesar el JSON nativo de Docker
 loki.process "docker_json_parser" {
   // Extrae las variables del formato JSON que genera Docker
   stage.json {
@@ -78,14 +78,13 @@ loki.process "docker_json_parser" {
   // Reemplaza la salida para que en Grafana veas solo el texto limpio y no el JSON completo
   stage.output {
     source = "output"
-    environment = "produccion"
   }
 
-  forward_to = [loki.write "local_loki".receiver]
+  forward_to = [loki.write.local_loki.receiver]
 }
 
 // 4. Envío: Lee los archivos encontrados y los pasa por el pipeline procesador
 loki.source.file "docker_logs" {
-  targets    = local.file_match "docker_containers".targets
-  forward_to = [loki.process "docker_json_parser".receiver]
+  targets    = local.file_match.docker_containers.targets
+  forward_to = [loki.process.docker_json_parser.receiver]
 }
