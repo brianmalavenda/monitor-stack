@@ -77,7 +77,7 @@ loki.process "docker_json_parser" {
 
   // Reemplaza la salida para que en Grafana veas solo el texto limpio y no el JSON completo
   stage.output {
-    source = "output",
+    source = "output"
     environment = "produccion"
   }
 

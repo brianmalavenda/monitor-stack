@@ -15,3 +15,4 @@ services:
 networks:
   monitoring:
     external: true
+    name: monitor-stack_monitoring
