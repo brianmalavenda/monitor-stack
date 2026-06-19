@@ -18,7 +18,7 @@ prometheus.remote_write "local_prometheus" {
 }
 
 // 2. Origen: Raspar los datos de Node Exporter
-prometheus.scrape "node-exporter" {
+prometheus.scrape "node_exporter" {
   targets = [{
     __address__ = "node-exporter:9100",
     instance    = "pro-monitor",
